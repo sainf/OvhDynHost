@@ -1,0 +1,15 @@
+{
+  "name": "ovh-dynhost-updater",
+  "version": "1.0.0",
+  "description": "A tiny CLI to update OVH DynHost records.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "bun build src/index.ts --compile --outfile ovh-dynhost-updater"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

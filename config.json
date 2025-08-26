@@ -1,0 +1,12 @@
+[
+  {
+    "username": "your-ovh-username",
+    "password": "your-ovh-password",
+    "hostname": "your-domain.com"
+  },
+  {
+    "username": "another-user",
+    "password": "another-password",
+    "hostname": "sub.another-domain.com"
+  }
+]

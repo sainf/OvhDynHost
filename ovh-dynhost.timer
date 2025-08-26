@@ -1,0 +1,11 @@
+[Unit]
+Description=Run OVH DynHost Updater periodically
+Requires=ovh-dynhost.service
+
+[Timer]
+Unit=ovh-dynhost.service
+OnCalendar=*:0/15
+Persistent=true
+
+[Install]
+WantedBy=timers.target

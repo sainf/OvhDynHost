@@ -1,0 +1,12 @@
+[Unit]
+Description=OVH DynHost Updater Service
+Wants=ovh-dynhost.timer
+
+[Service]
+Type=oneshot
+ExecStart=/path/to/your/ovh-dynhost-updater
+# Make sure to set the correct working directory if your config.json is not in the same directory as the binary
+# WorkingDirectory=/path/to/your/project
+
+[Install]
+WantedBy=multi-user.target
