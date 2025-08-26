@@ -10,6 +10,7 @@ It can update multiple DynHost records from a single configuration file and incl
 
 -   **Multiple Record Updates**: Update several DynHost records at once.
 -   **Single Binary**: Compiles to a single, standalone executable. No `node_modules` or other dependencies needed on the target machine.
+-   **Self-Update**: The binary can update itself to the latest version from GitHub.
 -   **Resilient IP Fetching**: Uses multiple public IP services (`icanhazip.com`, `api.ipify.org`) for redundancy.
 -   **Systemd Integration**: Comes with `.service` and `.timer` files for easy setup as a scheduled service on Linux.
 -   **Clear Logging**: Provides clean and informative output, suitable for systemd's journal.
@@ -145,6 +146,20 @@ journalctl -u ovh-dynhost.service
 # Follow the logs in real-time
 journalctl -f -u ovh-dynhost.service
 ```
+
+## Updating
+
+The application includes a self-update mechanism to easily upgrade to the latest version.
+
+```bash
+# If you installed using the install.sh script
+/opt/ovh-dynhost-updater/ovh-dynhost-updater --self-update
+
+# Or if you placed it elsewhere
+/path/to/your/ovh-dynhost-updater --self-update
+```
+
+This command will check for a new release on GitHub, download the correct binary for your system, and replace the current executable.
 
 ## Development
 

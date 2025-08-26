@@ -2,6 +2,8 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
+import semver from 'semver';
+import { version } from '../package.json';
 
 // Only use colors if the output is a TTY
 const isTTY = process.stdout.isTTY;
@@ -18,6 +20,7 @@ const IP_SERVICES = [
 ];
 
 const OVH_API_URL = "https://www.ovh.com/nic/update";
+const REPO = "sainf/OvhDynHost"; // If forked, replace with your GitHub repository
 
 interface DynHostRecord {
     username: string;
@@ -88,7 +91,72 @@ async function updateDynHost(record: DynHostRecord, ip: string): Promise<boolean
     }
 }
 
+async function selfUpdate() {
+    console.log("Checking for updates...");
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch latest release: ${response.statusText}`);
+        }
+
+        const release = await response.json();
+        const latestVersion = release.tag_name.replace('v', '');
+
+        if (semver.gt(latestVersion, version)) {
+            console.log(`A new version (${latestVersion}) is available. Current version is ${version}.`);
+            
+            const platform = process.platform;
+            const arch = process.arch;
+            let assetName;
+
+            if (platform === 'linux') {
+                assetName = `ovh-dynhost-updater-linux-x64`;
+            } else if (platform === 'win32') {
+                assetName = `ovh-dynhost-updater-windows-x64.exe`;
+            } else if (platform === 'darwin') {
+                assetName = arch === 'arm64' ? `ovh-dynhost-updater-darwin-aarch64` : `ovh-dynhost-updater-darwin-x64`;
+            } else {
+                console.error("Unsupported platform for self-update.");
+                return;
+            }
+
+            const asset = release.assets.find((a: any) => a.name === assetName);
+            if (!asset) {
+                console.error(`Could not find a binary for your platform (${platform}-${arch}) in the latest release.`);
+                return;
+            }
+
+            console.log("Downloading new version...");
+            const assetResponse = await fetch(asset.browser_download_url);
+            const newBinary = await assetResponse.arrayBuffer();
+
+            const executablePath = process.execPath;
+            
+            // Create a temporary file to avoid overwriting the current executable directly
+            const tempPath = executablePath + ".tmp";
+            await fs.writeFile(tempPath, Buffer.from(newBinary));
+            await fs.chmod(tempPath, 0o755);
+
+            // Replace the current executable with the new one
+            await fs.rename(tempPath, executablePath);
+
+            console.log("Update successful! Please restart the application.");
+
+        } else {
+            console.log("You are already on the latest version.");
+        }
+    } catch (error) {
+        console.error("Failed to check for updates:", error);
+    }
+}
+
 async function main() {
+    if (process.argv.includes('--self-update')) {
+        await selfUpdate();
+        return;
+    }
+
     let allUpdatesSucceeded = true;
     try {
         const configPath = path.resolve(process.cwd(), 'config.json');
