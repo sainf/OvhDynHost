@@ -51,6 +51,14 @@ bun run build
 
 This will create a single binary file named `ovh-dynhost-updater` in the project directory.
 
+To build for all supported platforms (Linux, Windows, macOS), run:
+
+```bash
+bun run build:all
+```
+
+This will generate binaries for each target in the project root.
+
 ### 3. Manual Execution (Optional)
 
 You can run the updater manually to test your configuration:
@@ -128,6 +136,25 @@ journalctl -f -u ovh-dynhost.service
 ```
 
 ## Development
+
+For development, you can run the script directly with Bun without compiling it first. This allows for faster testing cycles.
+
+```bash
+bun run dev
+```
+
+### Node.js Compatibility
+
+The script is also compatible with Node.js (v18 or newer). You can run it directly using `tsx` (a tool for executing TypeScript with Node.js) or by first compiling it to JavaScript.
+
+To run with `tsx`:
+```bash
+# First, install tsx if you haven't already
+npm install -g tsx
+
+# Then run the script
+tsx src/index.ts
+```
 
 Developed with the assistance of GitHub Copilot.
 

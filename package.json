@@ -4,7 +4,13 @@
   "description": "A tiny CLI to update OVH DynHost records.",
   "main": "src/index.ts",
   "scripts": {
-    "build": "bun build src/index.ts --compile --outfile ovh-dynhost-updater"
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --compile --outfile ovh-dynhost-updater",
+    "build:linux": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-linux-x64 --target bun-linux-x64",
+    "build:windows": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-windows-x64.exe --target bun-windows-x64",
+    "build:macos-intel": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-darwin-x64 --target bun-darwin-x64",
+    "build:macos-arm": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-darwin-aarch64 --target bun-darwin-aarch64",
+    "build:all": "bun run build:linux && bun run build:windows && bun run build:macos-intel && bun run build:macos-arm"
   },
   "devDependencies": {
     "bun-types": "latest"
