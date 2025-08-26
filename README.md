@@ -71,9 +71,20 @@ You can run the updater manually to test your configuration:
 
 For automatic updates, you can install the provided systemd service and timer.
 
-### 1. Copy Files
+### Easy Installation (Linux)
+
+On a Linux system, you can use the `install.sh` script to automate the entire process. It will download the latest release, set up the directories, and configure systemd.
+
+```bash
+curl -sL https://raw.githubusercontent.com/sainf/OvhDynHost/master/install.sh | sudo bash
+```
+
+### Manual Installation
+
+#### 1. Copy Files
 
 Copy the compiled binary and the configuration file to appropriate system locations.
+
 
 ```bash
 # Copy the binary to a directory in your PATH
@@ -161,3 +172,17 @@ Developed with the assistance of GitHub Copilot.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Releasing
+
+This project uses the [GitHub CLI (`gh`)](https://cli.github.com/) to create releases.
+
+1.  Make sure you have `gh` installed and authenticated (`gh auth login`).
+2.  Commit your changes.
+3.  Run the release script:
+
+```bash
+bun run release
+```
+
+This will build all binaries, create a new GitHub release with the version from `package.json`, generate release notes, and upload the binaries as release assets.

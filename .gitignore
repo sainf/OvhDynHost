@@ -3,13 +3,8 @@
 /bun.lockb
 
 # Build output
-ovh-dynhost-updater*
-!ovh-dynhost-updater-windows-x64.exe
-ovh-dynhost-updater-windows-x64.exe
-ovh-dynhost-updater
-ovh-dynhost-updater-linux-x64
-ovh-dynhost-updater-darwin-x64
-ovh-dynhost-updater-darwin-aarch64
+/bin
+
 
 
 # Logs

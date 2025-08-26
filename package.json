@@ -5,12 +5,13 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile ovh-dynhost-updater",
-    "build:linux": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-linux-x64 --target bun-linux-x64",
-    "build:windows": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-windows-x64.exe --target bun-windows-x64",
-    "build:macos-intel": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-darwin-x64 --target bun-darwin-x64",
-    "build:macos-arm": "bun build src/index.ts --compile --outfile ovh-dynhost-updater-darwin-aarch64 --target bun-darwin-aarch64",
-    "build:all": "bun run build:linux && bun run build:windows && bun run build:macos-intel && bun run build:macos-arm"
+    "build": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater",
+    "build:linux": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-linux-x64 --target bun-linux-x64",
+    "build:windows": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-windows-x64.exe --target bun-windows-x64",
+    "build:macos-intel": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-darwin-x64 --target bun-darwin-x64",
+    "build:macos-arm": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-darwin-aarch64 --target bun-darwin-aarch64",
+    "build:all": "bun run build:linux && bun run build:windows && bun run build:macos-intel && bun run build:macos-arm",
+    "release": "bun run build:all && gh release create v$(node -p \"require('./package.json').version\") --generate-notes ./bin/ovh-dynhost-updater-*"
   },
   "devDependencies": {
     "bun-types": "latest"
