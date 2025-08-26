@@ -1,6 +1,6 @@
 {
   "name": "ovh-dynhost-updater",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tiny CLI to update OVH DynHost records.",
   "main": "src/index.ts",
   "scripts": {
@@ -11,7 +11,7 @@
     "build:macos-intel": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-darwin-x64 --target bun-darwin-x64",
     "build:macos-arm": "bun build src/index.ts --compile --outfile bin/ovh-dynhost-updater-darwin-aarch64 --target bun-darwin-aarch64",
     "build:all": "bun run build:linux && bun run build:windows && bun run build:macos-intel && bun run build:macos-arm",
-    "release": "bun run build:all && gh release create v$(node -p \"require('./package.json').version\") --generate-notes ./bin/ovh-dynhost-updater-*"
+    "release": "bun run build:all && chmod +r ./bin/* && gh release create v$(node -p \"require('./package.json').version\") --generate-notes ./bin/ovh-dynhost-updater-*"
   },
   "devDependencies": {
     "bun-types": "latest"

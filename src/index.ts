@@ -3,6 +3,15 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
+// Only use colors if the output is a TTY
+const isTTY = process.stdout.isTTY;
+const colors = {
+    red: isTTY ? '\x1b[31m' : '',
+    green: isTTY ? '\x1b[32m' : '',
+    yellow: isTTY ? '\x1b[33m' : '',
+    reset: isTTY ? '\x1b[0m' : '',
+};
+
 const IP_SERVICES = [
     "https://ipv4.icanhazip.com",
     "https://api.ipify.org",
@@ -59,22 +68,22 @@ async function updateDynHost(record: DynHostRecord, ip: string): Promise<boolean
                 // Not a JSON response, just append the raw text
                 errorMessage += ` - ${responseText}`;
             }
-            console.error(`\x1b[31mERROR: ${errorMessage}\x1b[0m`);
+            console.error(`${colors.red}ERROR: ${errorMessage}${colors.reset}`);
             return false;
         }
 
         const [status, responseIp] = responseText.split(' ');
 
         if (status === 'good') {
-            console.log(`\x1b[32mSUCCESS: Record for ${hostname} updated to ${responseIp}\x1b[0m`);
+            console.log(`${colors.green}SUCCESS: Record for ${hostname} updated to ${responseIp}${colors.reset}`);
         } else if (status.startsWith('nochg')) {
-            console.log(`\x1b[33mNOCHANGE: Record for ${hostname} is already up-to-date with IP ${responseIp}\x1b[0m`);
+            console.log(`${colors.yellow}NOCHANGE: Record for ${hostname} is already up-to-date with IP ${responseIp}${colors.reset}`);
         } else {
             console.log(`INFO: OVH response for ${hostname}: ${responseText}`);
         }
         return true;
     } catch (error) {
-        console.error(`\x1b[31mERROR: Error updating DynHost for ${hostname}:`, error, '\x1b[0m');
+        console.error(`${colors.red}ERROR: Error updating DynHost for ${hostname}:${colors.reset}`, error);
         return false;
     }
 }
