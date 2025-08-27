@@ -11,6 +11,7 @@ It can update multiple DynHost records from a single configuration file and incl
 -   **Multiple Record Updates**: Update several DynHost records at once.
 -   **Single Binary**: Compiles to a single, standalone executable. No `node_modules` or other dependencies needed on the target machine.
 -   **Self-Update**: The binary can update itself to the latest version from GitHub.
+-   **IP Caching**: IP change detection to avoid unnecessary API calls when your IP hasn't changed.
 -   **Resilient IP Fetching**: Uses multiple public IP services (`icanhazip.com`, `api.ipify.org`) for redundancy.
 -   **Systemd Integration**: Comes with `.service` and `.timer` files for easy setup as a scheduled service on Linux.
 -   **Clear Logging**: Provides clean and informative output, suitable for systemd's journal.
@@ -66,6 +67,55 @@ You can run the updater manually to test your configuration:
 
 ```bash
 ./ovh-dynhost-updater
+```
+
+## IP Caching Functionality
+
+The OVH DynHost Updater includes intelligent IP caching to minimize unnecessary API calls and improve efficiency:
+
+### How It Works
+
+- **Automatic IP Detection**: The tool checks your current external IP address using multiple reliable services.
+- **Change Detection**: It compares your current IP with the last known IP stored in a cache file (`last_ip.txt`).
+- **Smart Updates**: Only performs DynHost updates when your IP address has actually changed.
+- **Bandwidth Saving**: Reduces API calls to OVH when your IP is stable, saving bandwidth and reducing server load.
+
+### Command Line Options
+
+```bash
+# Normal operation - only updates if IP has changed
+./ovh-dynhost-updater
+
+# Force update even if IP hasn't changed
+./ovh-dynhost-updater --force
+
+# Self-update to latest version
+./ovh-dynhost-updater --self-update
+```
+
+### Cache Behavior
+
+- **First Run**: Creates a new cache file and performs the update.
+- **Subsequent Runs**: Compares current IP with cached IP and only updates if different.
+- **Cache Location**: The `last_ip.txt` file is created in the working directory (same location as `config.json`).
+- **Error Handling**: If the cache file can't be read or written, the tool gracefully falls back to always updating.
+
+### Example Output
+
+```
+Successfully retrieved IP from https://ipv4.icanhazip.com: 203.0.113.45
+IP unchanged: 203.0.113.45
+IP has not changed. Skipping DynHost updates.
+Use --force to update anyway.
+```
+
+When IP changes:
+```
+Successfully retrieved IP from https://ipv4.icanhazip.com: 203.0.113.46
+IP has changed from 203.0.113.45 to 203.0.113.46
+IP has changed. Proceeding with DynHost updates...
+SUCCESS: Record for example.com updated to 203.0.113.46
+All records updated successfully.
 ```
 
 ## Systemd Service Installation

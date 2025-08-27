@@ -21,6 +21,7 @@ const IP_SERVICES = [
 
 const OVH_API_URL = "https://www.ovh.com/nic/update";
 const REPO = "sainf/OvhDynHost"; // If forked, replace with your GitHub repository
+const IP_CACHE_FILE = "last_ip.txt";
 
 interface DynHostRecord {
     username: string;
@@ -43,6 +44,43 @@ async function getPublicIp(): Promise<string> {
         }
     }
     throw new Error("All IP services failed.");
+}
+
+async function getLastKnownIp(): Promise<string | null> {
+    try {
+        const cachedIp = await fs.readFile(IP_CACHE_FILE, 'utf-8');
+        return cachedIp.trim();
+    } catch (error) {
+        // File doesn't exist or can't be read
+        return null;
+    }
+}
+
+async function saveLastKnownIp(ip: string): Promise<void> {
+    try {
+        await fs.writeFile(IP_CACHE_FILE, ip);
+    } catch (error) {
+        console.error(`Warning: Could not save IP to cache file: ${error}`);
+    }
+}
+
+async function hasIpChanged(): Promise<{ currentIp: string; hasChanged: boolean }> {
+    const currentIp = await getPublicIp();
+    const lastKnownIp = await getLastKnownIp();
+    
+    if (lastKnownIp === null) {
+        console.log("No cached IP found. This appears to be the first run.");
+        return { currentIp, hasChanged: true };
+    }
+    
+    const hasChanged = currentIp !== lastKnownIp;
+    if (hasChanged) {
+        console.log(`IP has changed from ${lastKnownIp} to ${currentIp}`);
+    } else {
+        console.log(`IP unchanged: ${currentIp}`);
+    }
+    
+    return { currentIp, hasChanged };
 }
 
 async function updateDynHost(record: DynHostRecord, ip: string): Promise<boolean> {
@@ -168,13 +206,32 @@ async function main() {
             return;
         }
 
-        const ip = await getPublicIp();
+        // Check if IP has changed before proceeding with updates
+        const { currentIp, hasChanged } = await hasIpChanged();
+        const forceUpdate = process.argv.includes('--force');
+
+        if (!hasChanged && !forceUpdate) {
+            console.log(`${colors.yellow}IP has not changed. Skipping DynHost updates.${colors.reset}`);
+            console.log(`${colors.yellow}Use --force to update anyway.${colors.reset}`);
+            return;
+        }
+
+        if (forceUpdate && !hasChanged) {
+            console.log("Forcing update despite IP not changing...");
+        } else {
+            console.log("IP has changed. Proceeding with DynHost updates...");
+        }
 
         for (const record of records) {
-            const success = await updateDynHost(record, ip);
+            const success = await updateDynHost(record, currentIp);
             if (!success) {
                 allUpdatesSucceeded = false;
             }
+        }
+
+        // Save the current IP only if all updates were successful
+        if (allUpdatesSucceeded) {
+            await saveLastKnownIp(currentIp);
         }
 
     } catch (error: any) {
