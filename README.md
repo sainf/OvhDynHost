@@ -68,12 +68,14 @@ For automated updates every 15 minutes:
 curl -sL https://raw.githubusercontent.com/sainf/OvhDynHost/master/install.sh | sudo bash
 
 # Manual install
-sudo cp ovh-dynhost-updater /usr/local/bin/
-sudo mkdir -p /etc/ovh-dynhost
-sudo cp config.json /etc/ovh-dynhost/
+sudo mkdir -p /opt/ovh-dynhost-updater
+sudo cp ovh-dynhost-updater /opt/ovh-dynhost-updater/
+sudo cp config.json /opt/ovh-dynhost-updater/
 sudo cp ovh-dynhost.{service,timer} /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now ovh-dynhost.timer
+
+# update the systemd files for your needs
 
 # Check logs
 journalctl -u ovh-dynhost.service
