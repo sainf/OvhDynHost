@@ -1,6 +1,6 @@
 {
   "name": "ovh-dynhost-updater",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A tiny CLI to update OVH DynHost records.",
   "main": "src/index.ts",
   "scripts": {

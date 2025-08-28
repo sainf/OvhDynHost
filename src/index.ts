@@ -202,6 +202,15 @@ async function main() {
     }
 
     let allUpdatesSucceeded = true;
+    // Get delay from --delay argument (default 5000ms)
+    let delayMs = 5000;
+    const delayArg = process.argv.find(arg => arg.startsWith('--delay='));
+    if (delayArg) {
+        const val = parseInt(delayArg.split('=')[1], 10);
+        if (!isNaN(val) && val >= 0) {
+            delayMs = val;
+        }
+    }
     try {
         const configPath = path.resolve(process.cwd(), 'config.json');
         const configFile = await fs.readFile(configPath, 'utf-8');
@@ -232,6 +241,10 @@ async function main() {
             const success = await updateDynHost(record, currentIp);
             if (!success) {
                 allUpdatesSucceeded = false;
+            }
+            // Configurable delay between updates
+            if (records.length > 1) {
+                await new Promise(resolve => setTimeout(resolve, delayMs));
             }
         }
 
