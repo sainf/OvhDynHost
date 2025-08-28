@@ -98,6 +98,12 @@ async function updateDynHost(record: DynHostRecord, ip: string): Promise<boolean
         const response = await fetch(url.toString(), { headers });
         const responseText = (await response.text()).trim();
 
+        // Show raw OVH update URL and response if --dev is enabled
+        if (process.argv.includes('--dev')) {
+            console.log(`${colors.yellow}[DEV MODE] OVH Update URL: ${url.toString()}${colors.reset}`);
+            console.log(`${colors.yellow}[DEV MODE] OVH Raw Response: ${responseText}${colors.reset}`);
+        }
+
         if (!response.ok) {
             let errorMessage = `Failed to update DynHost for ${hostname}: ${response.statusText}`;
             try {

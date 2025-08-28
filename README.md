@@ -80,6 +80,7 @@ The OVH DynHost Updater includes intelligent IP caching to minimize unnecessary 
 - **Smart Updates**: Only performs DynHost updates when your IP address has actually changed.
 - **Bandwidth Saving**: Reduces API calls to OVH when your IP is stable, saving bandwidth and reducing server load.
 
+
 ### Command Line Options
 
 ```bash
@@ -91,7 +92,14 @@ The OVH DynHost Updater includes intelligent IP caching to minimize unnecessary 
 
 # Self-update to latest version
 ./ovh-dynhost-updater --self-update
+
+# Development mode: show OVH update URL and raw response in console
+./ovh-dynhost-updater --dev
 ```
+
+#### --dev Option
+
+When running with `--dev`, the updater will print the OVH update URL and the raw response from OVH to the console for each DynHost update. This is useful for debugging and development, allowing you to see exactly what is sent to and received from the OVH API.
 
 ### Cache Behavior
 
